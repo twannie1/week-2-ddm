@@ -1,0 +1,576 @@
+---
+title: "Data Driven Decision-Making in Business"
+subtitle: "DDMB IBA 2022: Week 2"
+author: "Julius Tempelaars, Bent Eelman, Twan van Neijenhof"
+date: "Last compiled on `r Sys.Date()`"
+output: pdf_document
+---
+```{css, echo=FALSE}
+.colorCode {
+background-color: #ff5a5f
+}
+```
+
+
+Here I set the directory, please change this to the folder in which you store your files and R project! Do NOT use `setwd` but only the `knitr::opts_knit$set(root.dir = "")`. If you don't know your working directory, run `getwd` in your console.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/Gebruiker/Desktop/demo_DDMB')
+```
+
+Last week you got acquainted with classification and you've created an example on the Airbnb dataset to classify rating. In the following weeks we will focus on *unsupervised* classification. This means you do not know what groups could be distinguished in the data, but you do know which variables you would like to use to group the observations.
+
+# 1. Prepare variables
+First read in the datafile `supermarket-sales.csv` which you can find on canvas. For more information, visit: [kaggle](https://www.kaggle.com/aungpyaeap/supermarket-sales). Explore the datafile. In particular, observe how many observations, what is the unit of observation, and how many metric variables are included in the datafile.
+
+```{r}
+#write code here
+```
+
+## Outliers
+Classification techniques can be used to detect outliers. To explore the outliers in the data, inspect the main variables `Total` (Total price including tax), `Rating`, `Quantity` and `Unit.price` using a boxplot. Are there outliers according to the boxplot?
+
+```{r}
+par(mfrow=c(1,4)) # do not change this line! It makes sure that in the pdf the plots will be printed next to one another
+question1a <- function(){
+  # ANSWER: print boxplot of Total
+  # ANSWER: print boxplot of Rating
+  # ANSWER: print boxplot of Quantity
+  # ANSWER: print boxplot of Unit.Price
+  
+}
+question1a()
+```
+
+Identify the outliers by the method of the interquartile range (the difference between the first and third quarter). Create a function to calculate the upper and lower limits:
+
+$$ IQR = Q3 - Q1$$
+$$lower = Q1 - 1.5*IQR$$
+$$upper = Q3 + 1.5*IQR$$
+Write the function in this chunk below. Give to the function a vector that represents the column in the dataframe. Make sure that the output are two numbers: the upper and lower limit. Also, this will be a list as R needs to return multiple values as a list. Follow instructions below carefully. See my video on [writing functions](https://www.youtube.com/watch?v=4sDDV2pMAZw). 
+
+When you think the function is correct, save the function in your environment by `<<-` and print the lower limit for `Unit.Price`. To fetch only one value from the list that is returned in the function use `[[]]`. These double indexing brackets allow indexing on lists. This output will be graded by CodeGrade. Report the IQR of `Unit.Price` in your excel answersheet.
+
+```{r}
+question1b <- function(){
+  
+  # note that in the function i have added var, which is an R object
+  # by giving this to the function, I can calculate with var
+  # inside the function
+  calculate_limits<-function(var){
+    
+    # First calculate the IQR by using summary
+    # note that from the summary output you can get 
+    # the first element by summary(var)[1]
+    # IQR <- # write your code here, remove hashtag to run line
+    
+    # Second, calculate the upper and lower limit
+    # by using the formula above. Again use summary(var)[#]
+    # to select the correct numbers from the summary output
+    # lower <- # write your code here, remove hashtag to run line
+    # upper <- # write your code here, remove hashtag to run line
+    
+    # return the limits so you can use them later to identify outliers
+    # do not change this return command!
+    return(list(lower, upper))
+  }
+  # after you created the function, save in your environment 
+  # you have to run the following line (remove the hashtag):
+  # calculate_limits <<- calculate_limits
+  
+  # ANSWER: now call the function for the variable Unit.Price
+}
+question1b()
+```
+
+Remove outliers using your function for each of the four variables explored above. This can be done by assigning an NA to all the data outside the limits calculated above. 
+
+First get the limit numbers from the list that is outputted from the function you've created above, use `[[#]]`, and again replace the hashtag with the number of the element in the list. Now use indexing to obtain all the observations that are either below the lower limit, or above the upper limit. To make a selection OR, you have to use `|` and ofcourse `>` to indicate higher than and `<` to indicate lower than. 
+
+If you correctly obtained all the observations above and below the limits, you can assign a `NA` to all observations. Do this separately for each variable! Check by summary of one variable, print this summary for `Unit.Price`. This will be graded by CodeGrade.
+
+```{r}
+question1c <- function(){
+  
+  # first get the upper and lower limit of the first variable
+
+    # then use the indexing explained above to get the outliers
+    # check whether you've done it correctly
+    # then assign a NA to these outliers.
+  
+  # repeat for the other variables
+  # ANSWER: print the summary of Unit.Price when outliers are excluded
+}
+question1c()
+```
+
+Explore again using boxplots. You can simply call the function that you've created above to plot the boxplots:
+
+```{r}
+par(mfrow=c(1,4)) # plots will be printed next to one another
+question1a_1 <- function(){
+  question1a() # do not change this code!
+}
+question1a_1() 
+```
+
+## Standardize
+Select the **variables without the outliers** you've calculated above. Inspect the variables using a correlation matrix. Mind the missings! Use pairwise deletion. Standardize these variables using `scale` and `apply` and save them to your data. Print the summary of the scaled `Unit.Price`. 
+
+```{r}
+question1d <- function(){
+  # first inspect the correlation matrix of the four variables you've calculated above
+  # use pairwise deletion by use="pairwise.complete.obs"
+  
+  # scale each of the four variables in one line of code by
+  # using the apply function, please see help function
+  # if this is hard for you, get to know the apply function
+  # by trial and error. A good start is to try out the examples 
+  # provided on the bottom of the help function
+  # attach these scaled variables with new names to the dataframe
+  
+  # after you created the scaled variables, save in your environment 
+  # you have to run the following line (remove the hashtag):
+  # df[scaled_vars] <<- df[scaled_vars] 
+  # this only works if scaled_vars
+  # is a character vector with the names of the scaled variables
+  
+  # ANSWER: Print the summary of the scaled Total
+
+}
+question1d()
+```
+
+# 2. Hierarchical cluster analysis
+You are interested in finding invoice types in your data using the variables standardized above. Conduct hierarchical cluster analysis using `hclust`, and use your findings to answer the questions in the excel sheet. 
+
+First set the seed to 1234, take a sample of 30 observations using `sample`. This makes the output more readable. If you set the seed correctly, you should get the same result everytime you run the analysis. Save this sample in another dataframe. 
+
+Conduct cluster analysis using `hclust` and use single linkage. Don't forget to again set the seed to 1234! Hierarchical cluster analysis depends heavily on starting values, and these are randomly chosen. The set seed makes sure that you get the same results every time.
+
+Plot the results, and interpret the dendrogram. Repeat this analysis (with the same seed!) for each `Customer.type` separately.
+
+How many invoice types can you observe in the dendrogram for customer.type Member? Look at a specific height and see the long lines, they indicate clusters. If these lines lead to one observation, they might be considered outliers, not belonging to any cluster. Answer the questions in the excel sheet after interpreting the output.
+
+```{r}
+question2a <- function(){
+  # set the seed
+  # take the sample on the next line by 
+  # dfsample <- dataframe[sample(30)] # replace dataframe with your name
+  
+  # after you created the sample, save in your environment 
+  # you have to run the following line (remove the hashtag):
+  # dfsample <<- dfsample # use the name you gave your sample!
+  
+  # set seed again (use same seed)
+  # perform the hclust on a distance matrix of the scaled variables
+  # use single linkage
+  # ANSWER: plot the results from hclust
+  
+  # repeat separately for the Members and the Normal customers
+  # ANSWER: plot of Members customers
+  # ANSWER: plot of Normal customers
+}
+question2a()
+```
+
+## Linkage
+Compare your results when using a complete linkage or average linkage. Use function `hclust` again like you did above, but now use `method="complete"` and `method="average"`. 
+
+Inspect the largest 3 clusters using `cutree`. Compare the results for the complete or average linkage using a cross table. Calculate the proportion of misclassified cases, and print this both below in your output, and report this in your excel sheet. 
+
+Last, describe below your interpretation of the plots between the lines under `QUESTION TO BE ANSWERED INSIDE RMARKDOWN`.
+
+```{r}
+question2b<-function(){
+  
+  # run hclust with complete linkage on the sample
+  # save it into an object
+  # use cutree to get three clusters
+  # save this also into an object
+  
+  # repeat for hclust with average linkage
+  # calculate the proportion of misclassified observations
+  # ANSWER: print crosstabulation on the saved clusters
+}
+question2b()
+```
+
+## QUESTION TO BE ANSWERED INSIDE RMARKDOWN: 
+### Why do you think that average linkage has many cases clustered in the third cluster, while complete linkage only a few? TIP: look at the distribution of the clusters.
+
+----------------------------------------------------------------------------------
+*please elaborate your answer (4-5 sentences) about here*
+
+
+----------------------------------------------------------------------------------
+
+## 3. Distance measures
+
+### Euclidean distance
+By default, hierarchical clustering uses Euclidean distance:
+$$d(p,q) = \sqrt{\sum_{i=1}^m(q_{i}-p_{i})^2}$$
+
+Calculate this euclidean distance yourself on `Total`, `Rating`, `Quantity`, and `Unit.price`. Do NOT use the scaled variables! Do this only for the random sample of 30 invoices you've created above. Start by calculating the distance for one pair of variables (as in the formula above). 
+
+Report the Euclidean distance between invoice 28 and invoice 29 in the excel sheet.
+
+```{r}
+question3a <- function(){
+  # first perform list-wise deletion
+  # on your sample you created above
+  # only select the 4 variables 
+  # remove missing values by na.omit
+  
+  # save this complete sample in your environment using <<-
+  # you have to run the following line (remove the hashtag):
+  # dfsamplecomplete <<- dfsamplecomplete # use your name!
+  
+  # create a function for euclidean distance for two invoices
+  # give two arguments to the function,
+  # a being one invoice, and b being the other invoice
+  euclideanDist <- function(a, b){
+    
+    # first get the squared distances of these two invoices
+    # then sum the squared distances
+    # ANSWER: print sum squared distances
+    
+    # then take square root of the sum of the distances
+    # then return the sum to an object
+    # return() # here fill in the sum object 
+  }
+  
+  # conduct the operation on the 28th and 29th invoice
+  # i.e. rows 3 and 7 
+  # save 28th and 29th invoice in objects p and q
+  
+  # Calculate the euclidean distance for p and q
+  # euclideanDist(p,q) # remove hashtag to run line
+  
+  # ANSWER: Print Euclidean distance between 28th and 29th invoice
+  # inspect dist() matrix to check whether you have done it correctly
+  # do NOT print this matrix while knitting!
+}
+question3a()
+```
+
+Perform `hclust` using this distance of euclidean distance. To obtain Euclidean distances, use `dist` on the sample you saved above. Use complete linkage. Output the plot.
+```{r}
+question3b<-function(){
+  # please insert your code here
+}
+question3b()
+```
+
+Next you will compare the results with cosine distance.
+
+### Cosine distance
+The law of cosines generalizes the Pythagorean theorem, which holds only for right triangles: if the angle $y$ is a right angle (of measure 90 degrees, or $\pi/2$ radians), then cos $y$ = 0, and thus the law of cosines reduces to the Pythagorean theorem $c^{2}=a^{2}+b^{2}$. The law of cosines is useful for computing the third side of a triangle when two sides and their enclosed angle are known, and in computing the angles of a triangle if all three sides are known. (see Wikipedia)
+
+The characteristics that make cosine so useful in many applications, is also used for cluster analysis: The cosine distance represents the similarity and is calculated by:
+
+$$cos(\theta)=\frac{p*q}{|p|\times|q|} = \frac{\sum_{i=1}^m p_{i}\times q_{i}}{\sqrt{\sum_{i=1}^m p_{i}^2} \times \sqrt{ \sum_{i=1}^m q_{i}^2}}$$
+Note that the sign $\times$ denotes a matrix multiplication (in r this is done by $%*%$) while the $*$ sign is a normal cross-product of the same matrix. The formula above treats only vectors $p$ and $q$. You will perform the formula above on all the scaled variables at once. So $p$ and $q$ are columns in matrix $M$.
+
+In the following function you will calculate the cosine distances among the observations (i.e. invoices) in your sample. Follow the instructions carefully!
+CodeGrade will check three outputs: the 1-crossproduct matrix, the product of the colSums matrices, and the plot of hclust based on cosine distances.
+
+Report the Cosine distance between invoice 22 and invoice 29 in the excel sheet. Answer the question in the excel: Would you propose to use euclidean or cosine distance, based on dendrograms?
+
+Discuss below your interpretation of the plot based on euclidean distances vs the plot on cosine distances between the lines under `QUESTION TO BE ANSWERED INSIDE RMARKDOWN`.
+
+```{r}
+question3c<-function(){
+  # use the complete sample you've created in question3b
+  # with the four variables
+
+  # create matrix using as.matrix()
+  # transpose this matrix using t()
+  # so that you will calculate the distance between 
+  # observations and not variables
+
+  # Note that 1- cosine similarity = cosine distance
+  # Calculate 1-crossprod on the matrix
+  # ANSWER: print determinant of 1-crossproduct matrix
+  # use det() # use the name you assigned!
+  
+  # use colSums to sum the observations (square them first!)
+  # and then take the square root and multiply it with its square root 
+  # ANSWER: print determinant of the product of these two matrices
+  
+  # then divide the crossproduct by the product of the matrices
+  # save this division as dist object using as.dist()
+  # read the cosine distance between 28th and 29th invoice
+  
+  # now you can perform hclust with complete linkage
+  # on the cosine distances
+  # plot the hclust object (this plot gives you the dendrogram)
+  # ANSWER: print the plot of hclust 
+}
+question3c()
+```
+
+## QUESTION TO BE ANSWERED INSIDE RMARKDOWN: 
+### How do the dendrograms based on cosine and euclidean distance differ?
+
+----------------------------------------------------------------------------------
+*please elaborate your answer (4-5 sentences) about here*
+
+
+----------------------------------------------------------------------------------
+
+### Manhattan distance
+Both the Manhattan distance and the Hamming distance are developed for categorical data. The Manhattan distance is calculated by:
+
+$$d(p,q) = \sum_{i=1}^m |p_{i} - q_{i}|$$
+First calculate the Manhattan distance yourself. See lecture slides for how to create a function! To do this, select two categorical variables, namely `Branch` and `Customer.type` and make them nominal. For branch, this is done by creating three variables, BranchA, BranchB, and BranchC. Use the same 30 observations as above.
+
+When the categorical variables are numeric dummy variables, you can calculate the hamming distance using the formula above. Print the distance between the fourth and eleventh invoice, and print the complete distance matrix obtained with function `dist`.
+
+Do you get the same values? Do you need to transform Branch into three separate variables, or could you have done this differently?
+
+Report the Hamming distance between invoice 28 and invoice 29 in the excel sheet.
+Why is the hamming distance only appropriate for categorical data? Select the appropriate answer in the excel sheet.
+
+```{r}
+question3d<-function(){
+  # use the sample you've created question 2a (including all variables)
+  
+  # first create dummy variables branch and customer type
+  # make them numeric, i.e. zeros and ones.
+  # note that for branch you need to create three dummy variables
+  # save these variables to the dataframe 
+  
+  # after you created the dummy variables, save in your environment 
+  # you have to run the following line (remove the hashtag):
+  # df[vars_cat] <<- df[vars_cat]
+  # perform list-wise deletion on these variables
+  
+  # calculate distance between 28th and 29th invoice
+  # i.e. rows 1 and 4
+  # ANSWER print distance between 28th and 29th invoice
+  # check with dist, method=manhattan  
+}
+question3d()
+```
+
+Perform a hierarchical cluster analysis, now with Manhattan distances with complete linkage, on all categorical variables (`Branch`, `City`, `Customer.type`, `Gender`). In order to do this, make sure that also City becomes numeric dummy variables. Compare your results with the Euclidean distances using a dendrogram.
+
+Discuss below your interpretation of hamming distances on nominal and multinominal variables between the lines under `QUESTION TO BE ANSWERED INSIDE RMARKDOWN`.
+
+```{r}
+question3e<-function(){
+  # use the sample you've created under question2a
+  # if you done question 3d correctly, the dummy variables of branch and customer type should be added 
+  
+  # transform city and gender to numeric dummy variables
+# note that for city you need to create three dummy variables
+  # save these variables to the dataframe 
+  
+  # after you created the dummy variables, save in your environment 
+  # you have to run the following line (remove the hashtag):
+  # dfsample[vars_cat] <<- dfsample[vars_cat]
+  
+  # perform list-wise deletion on these variables
+  # now you can perform the cluster analysis!
+  # ANSWER: plot the hclust with hamming distance on these dummy variables
+}
+question3e()
+```
+
+## QUESTION TO BE ANSWERED INSIDE RMARKDOWN: 
+### How would you interpret these clusters? First, you've used two dichotomous variables Customer.type and Gender. How are the Manhattan distances affected when including multi-nomial variables such as Branch and City? HINT: How do dichotomous variables and multi-nomial variables differ?
+
+----------------------------------------------------------------------------------
+*please elaborate your answer (4-5 sentences) about here*
+
+
+----------------------------------------------------------------------------------
+
+### Hamming distance
+Finally, the hamming distance is appropriate for only nominal data. This measure can be calculated by:
+
+$$d(p,q)=\sum_{i=1}^m \left\{\begin{array}{ll}
+        0 & \mbox{if } p_{i} == q_{j}\\
+        1 & \mbox{else}
+    \end{array}
+    \right.$$
+    
+Calculate below the hamming distance yourself and transform it to a distance matrix by `as.dist`.
+
+```{r}
+question3f <- function(){
+  # use the sample and dummy variables you've created under question3e
+  # perform list-wise deletion
+
+  # create matrix out of the categorical variables (list-wise deletion)
+  
+  # calculate the hamming distance for 
+  # 28th and 29th observations in your data
+  # i.e. rows 1 and 4
+  # ANSWER: print hamming distance between these two invoices
+  
+  # include the code from the lecture slides 
+  # to calculate the hamming distance for all observations 
+
+  # as.dist to transform to distance matrix
+  # perform hierarchical clustering on this distance matrix
+  # use complete linkage
+  # ANSWER: plot the dendrogram
+}
+question3f()
+```
+
+
+# 4. K-means cluster analysis
+With the hierarchical cluster analysis, you do not have to specify how many clusters you expect. In K-means analysis you do. 
+
+Perform the k-means analysis for 2 to 6 clusters on the Member customers using Euclidean distances. Use all data again, the scaled variables, and listwise deletion! Print the within sum of squares of each solution by `$withinss` (follow instructions below). What do you see?
+
+Plot the results. Install `factoextra` to plot the number of clusters with `fviz_cluster`. Do this only for the males in the dataset. Use library `gridExtra` and function `grid.arrange` to portray the graphs in a neat manner.
+
+```{r}
+library(factoextra) # used for determining optimal amount of clusters
+library(gridExtra)
+question4a<-function(){
+  # first set seed to 1234
+  # then perform na.omit on the whole sample
+  # on the standardized variables from above
+  # try to find 2 clusters
+  # save cluster analysis to object km
+  # get the within sum of squares of this analysis
+  # ANSWER: print km$withinss # remove hashtag!
+
+  # use fviz_cluster on this cluster object
+  # see lecture slides
+  # save in object
+  
+  # repeat for 3,4,5 and 6 clusters
+
+  # ANSWER: print the 6 plots using grid.arrange
+}
+question4a()
+```
+
+
+## Optimal number of clusters
+What is the optimal number of clusters according to the silhouette score, the elbow method or the Gap statistic? Use `fviz_nbclust` from the package `factoextra` to determine the optimal number of clusters. Select `kmeans`. Include all observations. plot the three methods next to one another using `grid.arrange`.
+
+Discuss below your interpretation of the plots between the lines under `QUESTION TO BE ANSWERED INSIDE RMARKDOWN`.
+
+```{r}
+question4b<-function(){
+  # set seed
+  # perform na.omit on the whole sample
+  # perform fviz_nbclust on the scaled variables
+  # use method wss
+  
+  # repeat for method gap_stat and silhouette
+  # d
+  
+  # ANSWER: print the three plots next to one another using grid arrange.
+}
+question4b()
+```
+
+
+## QUESTION TO BE ANSWERED INSIDE RMARKDOWN: 
+### As you can see above, the results might differ dramatically. Can you think of a reason why the Gap statistic leads to such a different result than the other two methods?
+
+----------------------------------------------------------------------------------
+*please elaborate your answer (4-5 sentences) about here*
+
+
+----------------------------------------------------------------------------------
+
+# 5. Inspect cluster means
+Run the k-means clustering with the optimal number of clusters found above with the elbow method. Use `kmeans`. Save the solution to an R object. Inspect the variables for the clusters found using `$centers`. Remember to set seed to 1234!
+
+```{r}
+question5a<-function(){
+  # set seed
+  # perform kmeans on scaled variables
+  # get 4 clusters
+  # save result in an object
+  # get the cluster means by $centers from this object
+}
+question5a()
+```
+
+Now add the cluster membership to the data, and inspect the same variables using `aggregate`. In order to add the cluster membership to the data, you need to find the index of the non-missing observations that you've used for the k-means clustering using `rownames`.
+
+```{r}
+question5b<-function(){
+  # attach the cluster to data
+  # first get the index of the rows in the data
+  # in which the scaled variables are not missing
+  
+  # use this index to assign the cluster means to 
+  # these rows in a new column named cluster
+  # after you created the cluster variable, save in your environment 
+  # you have to run the following line (remove the hashtag):
+  # df$cluster <<- df$cluster
+  
+  
+  # Use aggregate to get the means of
+  # the original variables for each cluster
+  
+  # ANSWER: print the table of cluster means
+  # where rows are the clusters, and columns are
+  # the original variables
+}
+question5b()
+```
+
+## Post-hoc analysis
+Test whether the groups differ with respect to income using an anova `aov`. Test whether the groups differ with respect to `payment` using a chi-square test `chisq`. Interpret your findings and report in the excel file.
+
+```{r}
+question5c<-function(){
+  # perform anova on gross income and clusters
+  # inspect results using summary
+  # ANSWER: print TukeyHSD
+}
+question5c()
+```
+
+Test whether clusters 2 and 4 differ with respect to `Payment` using a chi-square test `chisq`. To do this, set the other clusters to `NA`. Compare the observed and expected frequencies. What do you observe?
+
+```{r}
+question5d<-function(){
+  # select the two clusters by using | in the ifelse statement
+  # and assign NA to the other clusters
+  
+  # perform a cross table on cluster and payment method
+  # ANSWER: print cross table
+  
+  # perform chisquare test and save in an object
+  # inspect expected frequencies (do not print!)
+  # ANSWER: print test output
+}
+question5d()
+```
+
+**************************************************************************************
+
+## KNIT RMARKDOWN TO PDF FILE TO UPLOAD TO CANVAS
+When you're ready, and you know for sure there are no mistakes in your code, you can try to knit the document. Knitting means that you run all the code chunks consecutively, so what is created in one code chunk might be used in the following chunk. 
+
+If you run into problems, please check the following:
+* Do not use the function install.packages() inside your code (only once to install the package). If you include install.packages, R will try to find a connection and install the package while knitting.
+* If you use functions from packages, you need to install this package before knitting, and use the function library() to be able to use them while knitting
+* Make sure the data and variables names you use, are consistent throughout
+* Check your output after you knitted!
+Please see my instruction video about [knitting](https://www.youtube.com/watch?v=uM-lA3K7wmo).
+
+**************************************************************************************
+
+## CREATE .R FILE TO UPLOAD TO CANVAS
+When you're done with the assignment, please run the following code in the console (the window in which commands and output are printed) to obtain the R document:
+
+knitr::purl("./DDMB-week2.Rmd")
+
+Note that the . represents your current working directory, so make sure the .Rmd file is located in this directory. The R file will be located in the same folder as your R project.
+
+**************************************************************************************
