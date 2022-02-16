@@ -35,9 +35,13 @@ Classification techniques can be used to detect outliers. To explore the outlier
 par(mfrow=c(1,4)) # do not change this line! It makes sure that in the pdf the plots will be printed next to one another
 question1a <- function(){
   # ANSWER: print boxplot of Total
+  boxplot(ss$Total)
   # ANSWER: print boxplot of Rating
+  boxplot(ss$Rating)
   # ANSWER: print boxplot of Quantity
+  boxplot(ss$Quantity)
   # ANSWER: print boxplot of Unit.Price
+  boxplot(ss$`Unit price`)
   
 }
 question1a()
